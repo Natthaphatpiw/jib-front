@@ -4,7 +4,6 @@ import { useState } from 'react';
 import SearchInterface from '@/components/SearchInterface';
 import ProductGrid from '@/components/ProductGrid';
 import { SearchResponse } from '@/types';
-import os from 'os';
 import dotenv from 'dotenv';
 
 dotenv.config();
