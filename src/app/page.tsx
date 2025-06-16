@@ -4,6 +4,14 @@ import { useState } from 'react';
 import SearchInterface from '@/components/SearchInterface';
 import ProductGrid from '@/components/ProductGrid';
 import { SearchResponse } from '@/types';
+import os from 'os';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const isLocal = os.hostname() === 'localhost';
+const apiUrl = isLocal ? process.env.NEXT_PUBLIC_API_URL_LOCAL : process.env.NEXT_PUBLIC_API_URL_PROD;
+console.log(apiUrl, isLocal);
 
 export default function Home() {
   const [searchResults, setSearchResults] = useState<SearchResponse | null>(null);
@@ -16,7 +24,7 @@ export default function Home() {
     setCurrentQuery(query);
     setIsLoading(true);
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/search', {
+      const response = await fetch(apiUrl || 'http://localhost:8000/api/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
