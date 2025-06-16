@@ -8,10 +8,7 @@ import os from 'os';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-const isLocal = os.hostname() === 'localhost';
-const apiUrl = isLocal ? process.env.NEXT_PUBLIC_API_URL_LOCAL : process.env.NEXT_PUBLIC_API_URL_PROD;
-console.log(apiUrl, isLocal);
+const apiUrl = process.env.NEXT_PUBLIC_API_URL_PROD;
 
 export default function Home() {
   const [searchResults, setSearchResults] = useState<SearchResponse | null>(null);
