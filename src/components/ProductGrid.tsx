@@ -32,40 +32,37 @@ function HighlightedText({ text, searchQuery }: { text: string; searchQuery?: st
 }
 
 function ProductCard({ product, searchQuery }: { product: Product; searchQuery?: string }) {
-  const formatPrice = (price: string) => {
-    return price.replace(/[\d,]+/, (match) => {
-      return new Intl.NumberFormat('th-TH').format(parseInt(match.replace(/,/g, '')));
-    });
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('th-TH').format(price);
   };
 
-  const formatViews = (views: string) => {
-    const num = parseInt(views.replace(/,/g, ''));
-    if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}K`;
+  const formatViews = (views: number) => {
+    if (views >= 1000) {
+      return `${(views / 1000).toFixed(1)}K`;
     }
-    return views;
+    return views.toString();
   };
 
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
       <div className="relative aspect-square">
         <Image
-          src={product.รูปสินค้า}
-          alt={product.ชื่อสินค้า}
+          src={product.image}
+          alt={product.name}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         <div className="absolute top-2 left-2">
           <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium">
-            {product.หมวดหมู่}
+            {product.category}
           </span>
         </div>
-        {product.ส่วนลด && product.ส่วนลด !== '-' && (
+        {product.discount > 0 && (
           <div className="absolute top-2 right-2">
             <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-medium flex items-center">
               <Tag size={12} className="mr-1" />
-              SALE
+              -{product.discount}%
             </span>
           </div>
         )}
@@ -73,18 +70,22 @@ function ProductCard({ product, searchQuery }: { product: Product; searchQuery?:
 
       <div className="p-4">
         <h3 className="font-medium text-gray-900 line-clamp-2 mb-2 min-h-[3rem]">
-          <HighlightedText text={product.ชื่อสินค้า} searchQuery={searchQuery} />
+          <HighlightedText text={product.name} searchQuery={searchQuery} />
         </h3>
 
         <div className="text-sm text-gray-600 line-clamp-3 mb-4">
-          <HighlightedText text={product.คำอธิบายสินค้า} searchQuery={searchQuery} />
+          <HighlightedText text={product.detail} searchQuery={searchQuery} />
+        </div>
+        
+        <div className="text-xs text-gray-500 mb-2">
+          {product.brand} | {product.warranty}
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            {product.ราคาเดิม !== product.ราคาปัจจุบัน && (
+            {product.price !== product.sellprice && (
               <span className="text-sm text-gray-400 line-through">
-                {formatPrice(product.ราคาเดิม)}
+                ฿{formatPrice(product.price)}
               </span>
             )}
             <div className="flex items-center text-xs text-gray-500">
@@ -95,20 +96,25 @@ function ProductCard({ product, searchQuery }: { product: Product; searchQuery?:
 
           <div className="flex items-center justify-between">
             <div className="text-xl font-bold text-blue-600">
-              {formatPrice(product.ราคาปัจจุบัน)}
+              ฿{formatPrice(product.sellprice)}
             </div>
           </div>
 
-          {product.ส่วนลด && product.ส่วนลด !== '-' && (
+          {product.discount > 0 && (
             <div className="text-sm text-green-600 font-medium">
-              {product.ส่วนลด}
+              ประหยัด ฿{formatPrice(product.price - product.sellprice)}
             </div>
           )}
         </div>
 
-        <button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+        <a 
+          href={product.link} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-center"
+        >
           ดูรายละเอียด
-        </button>
+        </a>
       </div>
     </div>
   );

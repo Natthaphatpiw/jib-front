@@ -3,11 +3,7 @@
 import { useState } from 'react';
 import SearchInterface from '@/components/SearchInterface';
 import ProductGrid from '@/components/ProductGrid';
-import { SearchResponse } from '@/types';
-import dotenv from 'dotenv';
-
-dotenv.config();
-const apiUrl = process.env.NEXT_PUBLIC_API_URL_PROD;
+import { SearchResponse, RecommendationItem } from '@/types';
 
 export default function Home() {
   const [searchResults, setSearchResults] = useState<SearchResponse | null>(null);
@@ -20,14 +16,13 @@ export default function Home() {
     setCurrentQuery(query);
     setIsLoading(true);
     try {
-      const response = await fetch(apiUrl || 'http://localhost:8000/api/search', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/search`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           query,
-          llm_provider: 'openai',
         }),
       });
 
@@ -41,8 +36,9 @@ export default function Home() {
       console.error('Search error:', error);
       setSearchResults({
         products: [],
-        suggestions: [],
-        ranking_explanation: 'เกิดข้อผิดพลาดในการค้นหา',
+        explanation: 'เกิดข้อผิดพลาดในการค้นหา',
+        total_found: 0,
+        recommendations: [],
       });
     } finally {
       setIsLoading(false);
@@ -57,7 +53,7 @@ export default function Home() {
             JIB Computer Shop
           </h1>
           <p className="text-xl text-gray-600">
-            AI-Powered Smart Search
+            ค้นหาสินค้าด้วย AI แบบอัจฉริยะ
           </p>
         </div>
 
@@ -65,14 +61,30 @@ export default function Home() {
           <SearchInterface 
             onSearch={handleSearch}
             isLoading={isLoading}
-            suggestions={searchResults?.suggestions || []}
+            suggestions={[]}
           />
 
           {searchResults && (
             <div className="mt-8">
-              {searchResults.ranking_explanation && (
+              {searchResults.explanation && (
                 <div className="mb-6 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-                  <p className="text-gray-700">{searchResults.ranking_explanation}</p>
+                  <h3 className="font-semibold text-gray-900 mb-2">ผลการค้นหา</h3>
+                  <p className="text-gray-700">{searchResults.explanation}</p>
+                  <p className="text-sm text-gray-500 mt-2">พบ {searchResults.total_found} รายการ</p>
+                </div>
+              )}
+              
+              {searchResults.recommendations && searchResults.recommendations.length > 0 && (
+                <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                  <h3 className="font-semibold text-green-900 mb-3">สินค้าที่แนะนำ</h3>
+                  <div className="space-y-2">
+                    {searchResults.recommendations.slice(0, 3).map((rec: RecommendationItem) => (
+                      <div key={rec.product_id} className="text-sm">
+                        <span className="font-medium text-green-800">อันดับ {rec.rank}:</span>
+                        <span className="text-green-700 ml-2">{rec.reasons.join(', ')}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 

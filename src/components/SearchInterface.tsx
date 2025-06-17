@@ -53,7 +53,7 @@ export default function SearchInterface({ onSearch, isLoading, suggestions }: Se
               onChange={(e) => setQuery(e.target.value)}
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
-              placeholder="ค้นหาสินค้า เช่น โน้ตบุ๊คแรงๆ งบ 25,000 หรือ การ์ดจอ RTX"
+              placeholder="อธิบายความต้องการของคุณ เช่น โน้ตบุ๊ค งบ 15000 ใช้ทำงานเป็นหลัก เน้นใช้ excel ทำงานโรงพยาบาลทั่วไป"
               className="w-full px-6 py-4 text-lg bg-transparent border-none outline-none placeholder-gray-400 text-black"
               disabled={isLoading}
             />

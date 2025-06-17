@@ -4,12 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "dotenv": "^16.5.0",
     "lucide-react": "^0.515.0",
     "next": "15.3.3",
     "react": "^19.0.0",
